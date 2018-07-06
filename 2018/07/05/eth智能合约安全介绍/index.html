@@ -86,17 +86,17 @@
 
 
 
-<meta name="description" content="开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。  ##0x01 安全思维转变 对于区块链安全了解认知不够的， 需要明确下思">
+<meta name="description" content="开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。">
 <meta name="keywords" content="智能合约安全,区块链安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【区块链回归技术】 eth智能合约安全介绍">
 <meta property="og:url" content="http://yoursite.com/2018/07/05/eth智能合约安全介绍/index.html">
 <meta property="og:site_name" content="jige003">
-<meta property="og:description" content="开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。  ##0x01 安全思维转变 对于区块链安全了解认知不够的， 需要明确下思">
-<meta property="og:updated_time" content="2018-07-06T07:35:32.000Z">
+<meta property="og:description" content="开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。">
+<meta property="og:updated_time" content="2018-07-06T07:40:03.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【区块链回归技术】 eth智能合约安全介绍">
-<meta name="twitter:description" content="开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。  ##0x01 安全思维转变 对于区块链安全了解认知不够的， 需要明确下思">
+<meta name="twitter:description" content="开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。">
 
 
 
@@ -418,32 +418,26 @@
         <blockquote>
 <p>开发智能合约需要一个全新思维， 不同于以往的项目开发， 需要对区块链的基本概念至少有一个基本的认知。由于其不可篡改性， 区块链的犯错成本往往是巨大的， 并且很难通过迭代修复。 随着大家对区块链研究越来越深入、 了解越来越透彻， 智能合约语言的bug及项目复杂性带来的安全漏洞也逐渐抛出水面， 面临的安全形势也变得千变万化。</p>
 </blockquote>
-<p>##0x01 安全思维转变</p>
-<p>对于区块链安全了解认知不够的， 需要明确下思维的转变：</p>
-<p>###合约漏洞修复无法通过升级部署来完成， 只能重新部署一个新的合约</p>
-<p>智能合约是编译后部署到区块链， 编译合约可以得到bytecode 或者runtime bytecode，部署到链上会得到一个合约地址， 合约地址与账户地址格式一样是公钥， 区分合约地址与账户地址可以通过接口获取code， 其中账户地址返回的都是0x0； 当代码变更重新执行部署实际上会返回一个新的合约地址， 存储的是不一样的runtime bytecode。bytecode 包含构造函数、 初始化代码及runtime bytecode；runtime bytecode 是实际存储在合约地址上的字节码。</p>
-<p>###合约函数访问权限特性需要明确</p>
-<p>合约函数默认是public权限， 传统项目开发一般不会造成什么安全问题。 由于区块链是去中心化的， 部署的合约是公开的， 也意味着任何人可以调用public权限接口，这样就可能导致恶意调用造成的安全漏洞。</p>
-<p>###清楚gas的花费以及区块的gas limit</p>
-<p>以太坊的evm是基于gas消耗执行的， 链上存储数据、 修改数据都是要消耗gas的， 而gas是由eth转换提供的。 因此不合理的代码会造成高额的花费， 对于恶意的调用也可能造成类似ddos的攻击， 无限消耗的你花费； 必须谨慎使用没有固定迭代次数的循环， 特别是依赖于storage的， 由于storage是把数据存储在链上，每次操作都会消耗gas， 特别这里有一个坑是solidity默认类型就是storage而不是memory， 因此必须特别清醒意识到哪些数据是有必要存储到链上的， 非必要的需要明确声明为memory。</p>
-<p>###区块链没有私有数据</p>
-<p>在智能合约中你所用的一切都是公开可见的，即便是局部变量和被标记成private的状态变量也是如此。</p>
+<a id="more"></a>
+<h2 id="0x01-安全思维转变"><a href="#0x01-安全思维转变" class="headerlink" title="0x01 安全思维转变"></a>0x01 安全思维转变</h2><p>对于区块链安全了解认知不够的， 需要明确下思维的转变：</p>
+<h3 id="合约漏洞修复无法通过升级部署来完成，-只能重新部署一个新的合约"><a href="#合约漏洞修复无法通过升级部署来完成，-只能重新部署一个新的合约" class="headerlink" title="合约漏洞修复无法通过升级部署来完成， 只能重新部署一个新的合约"></a>合约漏洞修复无法通过升级部署来完成， 只能重新部署一个新的合约</h3><p>智能合约是编译后部署到区块链， 编译合约可以得到bytecode 或者runtime bytecode，部署到链上会得到一个合约地址， 合约地址与账户地址格式一样是公钥， 区分合约地址与账户地址可以通过接口获取code， 其中账户地址返回的都是0x0； 当代码变更重新执行部署实际上会返回一个新的合约地址， 存储的是不一样的runtime bytecode。bytecode 包含构造函数、 初始化代码及runtime bytecode；runtime bytecode 是实际存储在合约地址上的字节码。</p>
+<h3 id="合约函数访问权限特性需要明确"><a href="#合约函数访问权限特性需要明确" class="headerlink" title="合约函数访问权限特性需要明确"></a>合约函数访问权限特性需要明确</h3><p>合约函数默认是public权限， 传统项目开发一般不会造成什么安全问题。 由于区块链是去中心化的， 部署的合约是公开的， 也意味着任何人可以调用public权限接口，这样就可能导致恶意调用造成的安全漏洞。</p>
+<h3 id="清楚gas的花费以及区块的gas-limit"><a href="#清楚gas的花费以及区块的gas-limit" class="headerlink" title="清楚gas的花费以及区块的gas limit"></a>清楚gas的花费以及区块的gas limit</h3><p>以太坊的evm是基于gas消耗执行的， 链上存储数据、 修改数据都是要消耗gas的， 而gas是由eth转换提供的。 因此不合理的代码会造成高额的花费， 对于恶意的调用也可能造成类似ddos的攻击， 无限消耗的你花费； 必须谨慎使用没有固定迭代次数的循环， 特别是依赖于storage的， 由于storage是把数据存储在链上，每次操作都会消耗gas， 特别这里有一个坑是solidity默认类型就是storage而不是memory， 因此必须特别清醒意识到哪些数据是有必要存储到链上的， 非必要的需要明确声明为memory。</p>
+<h3 id="区块链没有私有数据"><a href="#区块链没有私有数据" class="headerlink" title="区块链没有私有数据"></a>区块链没有私有数据</h3><p>在智能合约中你所用的一切都是公开可见的，即便是局部变量和被标记成private的状态变量也是如此。</p>
 <p>如果不想让矿工作弊的话，在智能合约中使用随机数会很棘手 ， 在智能合约中使用随机数很难保证节点不作弊， 这是因为智能合约中的随机数一般要依赖计算节点的本地时间得到， 而本地时间是可以被恶意节点伪造的，因此这种方法并不安全。 通行的做法是采用链外的第三方服务，比如 Oraclize 来获取随机数。</p>
-<p>##0x02 一些开发tips</p>
-<p>###认真对待警告</p>
-<p>如果编译器警告了你什么事，你最好修改一下，即使你不认为这个特定的警告不会产生安全隐患，因为那也有可能埋藏着其他的问题。 我们给出的任何编译器警告，都可以通过轻微的修改来去掉。</p>
+<h2 id="0x02-一些开发tips"><a href="#0x02-一些开发tips" class="headerlink" title="0x02 一些开发tips"></a>0x02 一些开发tips</h2><h3 id="认真对待警告"><a href="#认真对待警告" class="headerlink" title="认真对待警告"></a>认真对待警告</h3><p>如果编译器警告了你什么事，你最好修改一下，即使你不认为这个特定的警告不会产生安全隐患，因为那也有可能埋藏着其他的问题。 我们给出的任何编译器警告，都可以通过轻微的修改来去掉。</p>
 <p>同时也请尽早添加 pragma experimental “v0.5.0”; 来允许 0.5.0 版本的安全特性。 注意在这种情况下，experimental 并不意味着任何有风险的安全特性， 它只是可以允许一些在当前版本还不支持的 Solidity 特性，来提供向后的兼容。</p>
-<p>###限定eth的数量<br>限定storage 在一个智能合约中 eth（或者其它通证）的数量。 如果你的源代码、编译器或者平台出现了 bug，可能会导致这些资产丢失。 如果你想控制你的损失，就要限定eth的数量。</p>
-<p>###使用“检查-生效-交互”（Checks-Effects-Interactions）模式<br>大多数函数会首先做一些检查工作（例如谁调用了函数，参数是否在取值范围之内，它们是否发送了足够的 eth ，用户是否具有通证等等）。 这些检查工作应该首先被完成。</p>
+<h3 id="限定eth的数量"><a href="#限定eth的数量" class="headerlink" title="限定eth的数量"></a>限定eth的数量</h3><p>限定storage 在一个智能合约中 eth（或者其它通证）的数量。 如果你的源代码、编译器或者平台出现了 bug，可能会导致这些资产丢失。 如果你想控制你的损失，就要限定eth的数量。</p>
+<h3 id="使用“检查-生效-交互”（Checks-Effects-Interactions）模式"><a href="#使用“检查-生效-交互”（Checks-Effects-Interactions）模式" class="headerlink" title="使用“检查-生效-交互”（Checks-Effects-Interactions）模式"></a>使用“检查-生效-交互”（Checks-Effects-Interactions）模式</h3><p>大多数函数会首先做一些检查工作（例如谁调用了函数，参数是否在取值范围之内，它们是否发送了足够的 eth ，用户是否具有通证等等）。 这些检查工作应该首先被完成。</p>
 <p>第二步，如果所有检查都通过了，应该接着进行会影响当前合约状态变量的那些处理。 与其它合约的交互应该是任何函数的最后一步。</p>
 <p>早期合约延迟了一些效果的产生，为了等待外部函数调用以非错误状态返回。 由于上文所述的重入问题，这通常会导致严重的后果。</p>
 <p>请注意，对已知合约的调用反过来也可能导致对未知合约的调用，所以最好是一直保持使用这个模式编写代码。</p>
-<p>###包含故障-安全（Fail-Safe）模式<br>尽管将系统完全去中心化可以省去许多中间环节，但包含某种故障-安全模式仍然是好的做法，尤其是对于新的代码来说：</p>
+<h3 id="包含故障-安全（Fail-Safe）模式"><a href="#包含故障-安全（Fail-Safe）模式" class="headerlink" title="包含故障-安全（Fail-Safe）模式"></a>包含故障-安全（Fail-Safe）模式</h3><p>尽管将系统完全去中心化可以省去许多中间环节，但包含某种故障-安全模式仍然是好的做法，尤其是对于新的代码来说：</p>
 <p>你可以在你的智能合约中增加一个函数实现某种程度上的自检查，比如“ eth是否会泄露？”， “通证的总和是否与合约的余额相等？”等等。 请记住，你不能使用太多的 gas，所以可能需要通过 eth计算来辅助。</p>
 <p>如果自检查没有通过，合约就会自动切换到某种“故障安全”模式， 例如，关闭大部分功能，将控制权交给某个固定的可信第三方，或者将合约转换成一个简单的“退回我的钱”合约。</p>
-<p>###形式化验证<br>使用形式化验证可以执行自动化的数学证明，保证源代码符合特定的正式规范。 规范仍然是正式的（就像源代码一样），但通常要简单得多。</p>
+<h3 id="形式化验证"><a href="#形式化验证" class="headerlink" title="形式化验证"></a>形式化验证</h3><p>使用形式化验证可以执行自动化的数学证明，保证源代码符合特定的正式规范。 规范仍然是正式的（就像源代码一样），但通常要简单得多。</p>
 <p>请注意形式化验证本身只能帮助你理解你做的（规范）和你怎么做（实际的实现）的之间的差别。 你仍然需要检查这个规范是否是想要的，而且没有漏掉由它产生的任何非计划内的效果。</p>
-<p>###基本权衡：简单性与复杂性<br>在评估一个智能合约的架构和安全性时有很多需要权衡的地方。对任何智能合约的建议是在各个权衡点中找到一个平衡点。</p>
+<h3 id="基本权衡：简单性与复杂性"><a href="#基本权衡：简单性与复杂性" class="headerlink" title="基本权衡：简单性与复杂性"></a>基本权衡：简单性与复杂性</h3><p>在评估一个智能合约的架构和安全性时有很多需要权衡的地方。对任何智能合约的建议是在各个权衡点中找到一个平衡点。</p>
 <p>从传统软件工程的角度出发：一个理想的智能合约首先需要模块化，能够重用代码而不是重复编写，并且支持组件升级。从智能合约安全架构的角度出发同样如此，模块化和重用被严格审查检验过的合约是最佳策略，特别是在复杂智能合约系统里。</p>
 <p>然而，这里有几个重要的例外，它们从合约安全和传统软件工程两个角度考虑，所得到的重要性排序可能不同。当中每一条，都需要针对智能合约系统的特点找到最优的组合方式来达到平衡。</p>
 <p>固化 vs 可升级</p>
@@ -452,11 +446,9 @@
 <p>固化 vs 可升级</p>
 <p>在很多文档或者开发指南中，包括该指南，都会强调延展性比如：可终止，可升级或可更改的特性，不过对于智能合约来说，延展性和安全之间是个基本权衡。</p>
 <p>延展性会增加程序复杂性和潜在的攻击面。对于那些只在特定的时间段内提供有限的功能的智能合约，简单性比复杂性显得更加高效，比如无管治功能，有限短期内使用的代币发行的智能合约系统(governance-fee,finite-time-frame token-sale contracts)。</p>
-<p>####庞大 vs 模块化</p>
-<p>一个庞大的独立的智能合约把所有的变量和模块都放到一个合约中。尽管只有少数几个大家熟知的智能合约系统真的做到了大体量，但在将数据和流程都放到一个合约中还是享有部分优点–比如，提高代码审核(code review)效率。</p>
+<h4 id="庞大-vs-模块化"><a href="#庞大-vs-模块化" class="headerlink" title="庞大 vs 模块化"></a>庞大 vs 模块化</h4><p>一个庞大的独立的智能合约把所有的变量和模块都放到一个合约中。尽管只有少数几个大家熟知的智能合约系统真的做到了大体量，但在将数据和流程都放到一个合约中还是享有部分优点–比如，提高代码审核(code review)效率。</p>
 <p>和在这里讨论的其他权衡点一样，传统软件开发策略和从合约安全角度出发考虑，两者不同主要在对于简单、短生命周期的智能合约；对于更复杂、长生命周期的智能合约，两者策略理念基本相同。</p>
-<p>####重复 vs 可重用</p>
-<p>从软件工程角度看，智能合约系统希望在合理的情况下最大程度地实现重用。 在Solidity中重用合约代码有很多方法。 使用你拥有的以前部署的经过验证的智能合约是实现代码重用的最安全的方式。</p>
+<h4 id="重复-vs-可重用"><a href="#重复-vs-可重用" class="headerlink" title="重复 vs 可重用"></a>重复 vs 可重用</h4><p>从软件工程角度看，智能合约系统希望在合理的情况下最大程度地实现重用。 在Solidity中重用合约代码有很多方法。 使用你拥有的以前部署的经过验证的智能合约是实现代码重用的最安全的方式。</p>
 <p>在以前所拥有已部署智能合约不可重用时重复还是很需要的。 现在Live Libs 和Zeppelin Solidity 正寻求提供安全的智能合约组件使其能够被重用而不需要每次都重新编写。任何合约安全性分析都必须标明重用代码，特别是以前没有建立与目标智能合同系统中处于风险中的资金相称的信任级别的代码。</p>
 
       
@@ -598,8 +590,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="http://or6a94o1l.bkt.clouddn.com/jinmuyan.avatar.png"
@@ -661,6 +662,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-安全思维转变"><span class="nav-number">1.</span> <span class="nav-text">0x01 安全思维转变</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#合约漏洞修复无法通过升级部署来完成，-只能重新部署一个新的合约"><span class="nav-number">1.1.</span> <span class="nav-text">合约漏洞修复无法通过升级部署来完成， 只能重新部署一个新的合约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合约函数访问权限特性需要明确"><span class="nav-number">1.2.</span> <span class="nav-text">合约函数访问权限特性需要明确</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#清楚gas的花费以及区块的gas-limit"><span class="nav-number">1.3.</span> <span class="nav-text">清楚gas的花费以及区块的gas limit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#区块链没有私有数据"><span class="nav-number">1.4.</span> <span class="nav-text">区块链没有私有数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-一些开发tips"><span class="nav-number">2.</span> <span class="nav-text">0x02 一些开发tips</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#认真对待警告"><span class="nav-number">2.1.</span> <span class="nav-text">认真对待警告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#限定eth的数量"><span class="nav-number">2.2.</span> <span class="nav-text">限定eth的数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用“检查-生效-交互”（Checks-Effects-Interactions）模式"><span class="nav-number">2.3.</span> <span class="nav-text">使用“检查-生效-交互”（Checks-Effects-Interactions）模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#包含故障-安全（Fail-Safe）模式"><span class="nav-number">2.4.</span> <span class="nav-text">包含故障-安全（Fail-Safe）模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#形式化验证"><span class="nav-number">2.5.</span> <span class="nav-text">形式化验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本权衡：简单性与复杂性"><span class="nav-number">2.6.</span> <span class="nav-text">基本权衡：简单性与复杂性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#庞大-vs-模块化"><span class="nav-number">2.6.1.</span> <span class="nav-text">庞大 vs 模块化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重复-vs-可重用"><span class="nav-number">2.6.2.</span> <span class="nav-text">重复 vs 可重用</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
