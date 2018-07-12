@@ -1,0 +1,1313 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java审计,web安全," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="0x00 简介SSM 即 SPRING、 SPRINGMVC、 MYBATIS 三大框架的整合。 随着其开发带来的各种便利以及好处， 越来越多的公司以及RD使用其开发各种线上产品和后台管理系统， 但也带来了许多安全性的问题。虽然JAVA 本身规范化程度比较高， 按照框架的标准进行开发确实能减少许多的SQL注入问题，但在其他方面基本上是没有做任何安全考虑。 使用SSM 通过MYBATIS的配置生成S">
+<meta name="keywords" content="java审计,web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSM框架使用基础安全分析">
+<meta property="og:url" content="http://yoursite.com/2016/03/28/SSM框架使用基础安全分析/index.html">
+<meta property="og:site_name" content="jige003">
+<meta property="og:description" content="0x00 简介SSM 即 SPRING、 SPRINGMVC、 MYBATIS 三大框架的整合。 随着其开发带来的各种便利以及好处， 越来越多的公司以及RD使用其开发各种线上产品和后台管理系统， 但也带来了许多安全性的问题。虽然JAVA 本身规范化程度比较高， 按照框架的标准进行开发确实能减少许多的SQL注入问题，但在其他方面基本上是没有做任何安全考虑。 使用SSM 通过MYBATIS的配置生成S">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql1.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql2.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql3.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql4.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql5.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql6.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql7.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql8.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql9.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql10.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss1.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss2.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss3.png">
+<meta property="og:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss4.png">
+<meta property="og:updated_time" content="2018-07-12T09:08:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSM框架使用基础安全分析">
+<meta name="twitter:description" content="0x00 简介SSM 即 SPRING、 SPRINGMVC、 MYBATIS 三大框架的整合。 随着其开发带来的各种便利以及好处， 越来越多的公司以及RD使用其开发各种线上产品和后台管理系统， 但也带来了许多安全性的问题。虽然JAVA 本身规范化程度比较高， 按照框架的标准进行开发确实能减少许多的SQL注入问题，但在其他方面基本上是没有做任何安全考虑。 使用SSM 通过MYBATIS的配置生成S">
+<meta name="twitter:image" content="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/03/28/SSM框架使用基础安全分析/"/>
+
+
+
+
+
+  <title>SSM框架使用基础安全分析 | jige003</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e70bbf70451c6386be46fae4c3c28c73";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">jige003</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/03/28/SSM框架使用基础安全分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jige003">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://or6a94o1l.bkt.clouddn.com/jinmuyan.avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="jige003">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SSM框架使用基础安全分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-03-28T11:32:33+08:00">
+                2016-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web安全/" itemprop="url" rel="index">
+                    <span itemprop="name">web安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2016/03/28/SSM框架使用基础安全分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-简介"><a href="#0x00-简介" class="headerlink" title="0x00 简介"></a>0x00 简介</h1><p>SSM 即 SPRING、 SPRINGMVC、 MYBATIS 三大框架的整合。 随着其开发带来的各种便利以及好处， 越来越多的公司以及RD使用其开发各种线上产品和后台管理系统， 但也带来了许多安全性的问题。虽然JAVA 本身规范化程度比较高， 按照框架的标准进行开发确实能减少许多的SQL注入问题，但在其他方面基本上是没有做任何安全考虑。 使用SSM 通过MYBATIS的配置生成SQL语句， 基本能屏蔽掉大部分的SQL注入问题。 但由于表单提交等大多使用POJO和DTO绑定的方式， 虽然SPRINGMVC自带有个编码处理方法， 但由于使用有限， String类型参数的却不会有任何的安全性处理， 这样大片的XSS问题随之产生 。 CSRF 的问题上， SRPINGMVC亦没有内置的接口。 在其他的逻辑产生的安全问题就不再这里面的分析范畴内了。</p>
+<a id="more"></a>
+<h2 id="0x01-SQL注入问题"><a href="#0x01-SQL注入问题" class="headerlink" title="0x01 SQL注入问题"></a>0x01 SQL注入问题</h2><p>MYBATIS支持配置XML查询和通用MAPPER查询两种。</p>
+<p>###1. 配置XML</p>
+<p>XML 文件中， 可以使用两种符号接收#和$ ， #符号类似于参数绑定的方式也就是JAVA的预编译处理， 这样是不会带来SQL注入问题的， 而$却相当于只把值传进来， 不做任何处理， 类似于拼接SQL语句。</p>
+<p>测试使用相关代码如下</p>
+<ul>
+<li>CONTROLLER代码</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/get1"</span>)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">username1</span><span class="params">(HttpServletRequest request, Model model)</span> </span>&#123;</div><div class="line"></div><div class="line">        String name = request.getParameter(<span class="string">"name"</span>);</div><div class="line"></div><div class="line">        User user = <span class="keyword">this</span>.userserivce.getUserByUsername1(name);</div><div class="line"></div><div class="line">        model.addAttribute(<span class="string">"user"</span>, user);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="string">"showuser"</span>;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/get2"</span>)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">username2</span><span class="params">(HttpServletRequest request, Model model)</span> </span>&#123;</div><div class="line"></div><div class="line">        String name = request.getParameter(<span class="string">"name"</span>);</div><div class="line"></div><div class="line">        User user = <span class="keyword">this</span>.userserivce.getUserByUsername2(name);</div><div class="line"></div><div class="line">        model.addAttribute(<span class="string">"user"</span>, user);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="string">"showuser"</span>;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>DAO代码</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">User selectByUsername1(String name);</div><div class="line"></div><div class="line">User selectByUsername2(@Param(&quot;name&quot;) String name);</div></pre></td></tr></table></figure>
+<ul>
+<li>MYBATIS XML 配置</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;select id=&quot;selectByUsername1&quot; resultMap=&quot;BaseResultMap&quot; parameterType=&quot;java.lang.String&quot; &gt;</div><div class="line"></div><div class="line">    select</div><div class="line"></div><div class="line">    &lt;include refid=&quot;Base_Column_List&quot; /&gt;</div><div class="line"></div><div class="line">    from user</div><div class="line"></div><div class="line">    where user_name = #&#123;name,jdbcType=VARCHAR&#125;</div><div class="line"></div><div class="line">  &lt;/select&gt;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">  &lt;select id=&quot;selectByUsername2&quot; resultMap=&quot;BaseResultMap&quot; parameterType=&quot;java.lang.String&quot; &gt;</div><div class="line"></div><div class="line">    select</div><div class="line"></div><div class="line">    &lt;include refid=&quot;Base_Column_List&quot; /&gt;</div><div class="line"></div><div class="line">    from user</div><div class="line"></div><div class="line">    where user_name = &apos;$&#123;name&#125;&apos;</div><div class="line"></div><div class="line">  &lt;/select&gt;</div></pre></td></tr></table></figure>
+<h4 id="测试使用-传参"><a href="#测试使用-传参" class="headerlink" title="测试使用#传参"></a>测试使用#传参</h4><p>正常访问</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql1.png" alt=""></p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql2.png" alt=""></p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql3.png" alt=""></p>
+<p>加入payload访问</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql4.png" alt=""></p>
+<p>无结果</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql5.png" alt=""></p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql6.png" alt=""></p>
+<p>可以看到数据执行的时候已经做了转义的处理。</p>
+<h4 id="测试使用-传参-1"><a href="#测试使用-传参-1" class="headerlink" title="测试使用$传参"></a>测试使用$传参</h4><p>正常访问</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql7.png" alt=""></p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql8.png" alt=""></p>
+<p>可以看到是拼接的SQL语句</p>
+<p>加入payload测试访问</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql9.png" alt=""></p>
+<p>依然正常访问， 已有SQL注入问题</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/sql10.png" alt=""></p>
+<p>在开发的过程中咱们尽量使用#传参， 减少$传参的使用， 如有需要， 也注意下出入参数的转义处理。</p>
+<h3 id="0x02-XSS问题"><a href="#0x02-XSS问题" class="headerlink" title="0x02 XSS问题"></a>0x02 XSS问题</h3><p>测试使用相关代码如下</p>
+<ul>
+<li>CONTROLLER</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">@RequestMapping(&quot;/show&quot;)</div><div class="line"></div><div class="line">    public String show(HttpServletRequest request)&#123;</div><div class="line"></div><div class="line">        return &quot;xssshow&quot;;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    @RequestMapping(&quot;get&quot;)</div><div class="line"></div><div class="line">    public String get(HttpServletRequest request, Model model)&#123;</div><div class="line"></div><div class="line">        Integer id = Integer.parseInt(request.getParameter(&quot;id&quot;));</div><div class="line"></div><div class="line">        User user = this.userserivce.getUserById(id);</div><div class="line"></div><div class="line">        model.addAttribute(&quot;user&quot;, user);</div><div class="line"></div><div class="line">        return &quot;getuser&quot;;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    @RequestMapping(&quot;/add&quot;)</div><div class="line"></div><div class="line">    public String add(User user)&#123;</div><div class="line"></div><div class="line">        int i = this.userserivce.insert(user);</div><div class="line"></div><div class="line">        return &quot;redirect:/xsstest/show&quot;;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>插入payload测试 <code>toor&quot;&#39;&gt;&lt;svg/onload=alert(/xss/)&gt;</code></p>
+<p>数据库里可看到并未做任何处理</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss1.png" alt=""></p>
+<p>查询访问</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss2.png" alt=""></p>
+<p>存在存储型XSS</p>
+<h4 id="一些安全的措施"><a href="#一些安全的措施" class="headerlink" title="一些安全的措施"></a>一些安全的措施</h4><ol>
+<li>SPRINGMVC和JSTL进行编码处理</li>
+</ol>
+<ul>
+<li>WEB.XML中添加</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;context-param&gt;</div><div class="line"></div><div class="line">    &lt;param-name&gt;defaultHtmlEscape&lt;/param-name&gt;</div><div class="line"></div><div class="line">    &lt;param-value&gt;true&lt;/param-value&gt;</div><div class="line"></div><div class="line">&lt;/context-param&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>JSP模板中添加</p>
+<ul>
+<li>针对所有FORM</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;spring:htmlEscape defaultHtmlEscape=&quot;true&quot; /&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>针对单个INPUT等</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;form:input path=&quot;name&quot; htmlEscape=&quot;true&quot; /&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>直接输出的标签</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;c:out value=&quot;$&#123;user.userName&#125;&quot; /&gt;</div></pre></td></tr></table></figure>
+<ol>
+<li>重写HttpServletRequestWrapper或HttpServletResponseWrapper使用FILTER进行过滤</li>
+</ol>
+<ul>
+<li>WEB.XML中添加</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;filter&gt;</div><div class="line"></div><div class="line">        &lt;filter-name&gt;XSS&lt;/filter-name&gt;</div><div class="line"></div><div class="line">        &lt;filter-class&gt;ssm.sec.filter.XSSFilter&lt;/filter-class&gt;</div><div class="line"></div><div class="line">    &lt;/filter&gt;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    &lt;filter-mapping&gt;</div><div class="line"></div><div class="line">        &lt;filter-name&gt;XSS&lt;/filter-name&gt;</div><div class="line"></div><div class="line">        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;</div><div class="line"></div><div class="line">    &lt;/filter-mapping&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>RequestWrapper.java</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">    private static Logger logger = Logger.getLogger(RequestWrapper.class);</div><div class="line"></div><div class="line">    public RequestWrapper(HttpServletRequest servletRequest) &#123;</div><div class="line"></div><div class="line">        super(servletRequest);</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String[] getParameterValues(String parameter) &#123;</div><div class="line"></div><div class="line">        logger.info(&quot;InarameterValues .. parameter .......&quot;);</div><div class="line"></div><div class="line">        String[] values = super.getParameterValues(parameter);</div><div class="line"></div><div class="line">        if (values == null) &#123;</div><div class="line"></div><div class="line">            return null;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        int count = values.length;</div><div class="line"></div><div class="line">        String[] encodedValues = new String[count];</div><div class="line"></div><div class="line">        for (int i = 0; i &lt; count; i++) &#123;</div><div class="line"></div><div class="line">            encodedValues[i] = cleanXSS(values[i]);</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return encodedValues;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getParameter(String parameter) &#123;</div><div class="line"></div><div class="line">        logger.info(&quot;Inarameter .. parameter .......&quot;);</div><div class="line"></div><div class="line">        String value = super.getParameter(parameter);</div><div class="line"></div><div class="line">        if (value == null) &#123;</div><div class="line"></div><div class="line">            return null;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        logger.info(&quot;Inarameter RequestWrapper ........ value .......&quot;);</div><div class="line"></div><div class="line">        return cleanXSS(value);</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    public String getHeader(String name) &#123;</div><div class="line"></div><div class="line">        logger.info(&quot;Ineader .. parameter .......&quot;);</div><div class="line"></div><div class="line">        String value = super.getHeader(name);</div><div class="line"></div><div class="line">        if (value == null)</div><div class="line"></div><div class="line">            return null;</div><div class="line"></div><div class="line">        logger.info(&quot;Ineader RequestWrapper ........... value ....&quot;);</div><div class="line"></div><div class="line">        return cleanXSS(value);</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    private String cleanXSS(String value) &#123;</div><div class="line"></div><div class="line">        logger.info(&quot;InnXSS RequestWrapper ...............&quot; + value);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;eval\\((.*)\\)&quot;, &quot;&quot;);</div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;[\\\&quot;\\\&apos;][\\s]*javascript:(.*)[\\\&quot;\\\&apos;]&quot;, &quot;\&quot;\&quot;&quot;);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;(?i)&lt;script.*?&gt;.*?&lt;script.*?&gt;&quot;, &quot;&quot;);</div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;(?i)&lt;script.*?&gt;.*?&lt;/script.*?&gt;&quot;, &quot;&quot;);</div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;(?i)&lt;.*?javascript:.*?&gt;.*?&lt;/.*?&gt;&quot;, &quot;&quot;);</div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;(?i)&lt;.*?\\s+on.*?&gt;.*?&lt;/.*?&gt;&quot;, &quot;&quot;);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;&lt;&quot;, &quot;&amp; lt;&quot;).replaceAll(&quot;&gt;&quot;, &quot;&amp; gt;&quot;);</div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;\\(&quot;, &quot;&amp; #40;&quot;).replaceAll(&quot;\\)&quot;, &quot;&amp; #41;&quot;);</div><div class="line"></div><div class="line">        value = value.replaceAll(&quot;&apos;&quot;, &quot;&amp; #39;&quot;);</div><div class="line"></div><div class="line">        logger.info(&quot;OutnXSS RequestWrapper ........ value .......&quot; + value);</div><div class="line"></div><div class="line">        return value;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>XSSFilter.java</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">package ssm.sec.filter;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">import java.io.IOException;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">import javax.servlet.Filter;</div><div class="line"></div><div class="line">import javax.servlet.FilterChain;</div><div class="line"></div><div class="line">import javax.servlet.FilterConfig;</div><div class="line"></div><div class="line">import javax.servlet.ServletException;</div><div class="line"></div><div class="line">import javax.servlet.ServletRequest;</div><div class="line"></div><div class="line">import javax.servlet.ServletResponse;</div><div class="line"></div><div class="line">import javax.servlet.http.HttpServletRequest;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">import org.apache.log4j.Logger;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">public class XSSFilter implements Filter &#123;</div><div class="line"></div><div class="line">    private static Logger logger = Logger.getLogger(XSSFilter.class);</div><div class="line"></div><div class="line">    private FilterConfig filterConfig;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    public void init(FilterConfig filterConfig) throws ServletException &#123;</div><div class="line"></div><div class="line">        this.filterConfig = filterConfig;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    public void destroy() &#123;</div><div class="line"></div><div class="line">        this.filterConfig = null;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)</div><div class="line"></div><div class="line">        throws IOException, ServletException &#123;</div><div class="line"></div><div class="line">        logger.info(&quot;Inlter CrossScriptingFilter ...............&quot;);</div><div class="line"></div><div class="line">        chain.doFilter(new RequestWrapper((HttpServletRequest) request), response);</div><div class="line"></div><div class="line">        logger.info(&quot;Outlter CrossScriptingFilter ...............&quot;);</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>重新插入数据， 会发现已经进行了过滤处理</li>
+</ul>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss3.png" alt=""></p>
+<p>数据库查看都是过滤和转义的结果</p>
+<p><img src="https://coding.net/u/b0lu/p/ssm-sec/git/raw/master/images/xss4.png" alt=""></p>
+<blockquote>
+<p>当然有时候由于业务需要，可能允许用户输入这种危险的字符， 这种通用的并不适用， 但可以考虑把一些特殊的符号转义成中文符号， 也许也恰好能满足业务的需求， 如&lt; 转义成 &lt;等，看起来和英文的一样， 但由于解释器并不识别， 而又变成安全的了。</p>
+</blockquote>
+<ol>
+<li>SPRINGMVC 视图中传递变量一般使用EL表达式</li>
+</ol>
+<blockquote>
+<p>虽然EL中内置许多默认的函数， 但并没有编码处理的函数， 因此只能够自定义函数进行处理。</p>
+</blockquote>
+<ul>
+<li>开发函数处理类，处理类就是普通的类，每个函数对应类中的一个静态方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public class XSSEL &#123;</div><div class="line"></div><div class="line">    private static Logger logger = Logger.getLogger(XSSEL.class);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    public static String HTMLEncode(String val)&#123;</div><div class="line"></div><div class="line">        logger.info(&quot;In EL func values ====&gt;&quot;+ val);</div><div class="line"></div><div class="line">        if(val != null)&#123;</div><div class="line"></div><div class="line">            val = val.replace(&quot;&amp;&quot;, &quot;&amp;amp;&quot;).replace(&quot;&lt;&quot;, &quot;&amp;lt;&quot;).replace(&quot;&gt;&quot;, &quot;&amp;gt;&quot;).replace(&quot;\&quot;&quot;, &quot;&amp;quot;&quot;)</div><div class="line"></div><div class="line">                    .replace(&quot;/&quot;, &quot;&amp;#x2F;&quot;).replace(&quot;&apos;&quot;, &quot;&amp;#x27;&quot;);</div><div class="line"></div><div class="line">            logger.info(&quot;Out EL func values ====&gt;&quot;+ val);</div><div class="line"></div><div class="line">            return val;</div><div class="line"></div><div class="line">        &#125;else&#123;</div><div class="line"></div><div class="line">            return &quot;&quot;;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>建立TLD文件，定义表达式函数</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">taglib</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee"</span></span></div><div class="line"></div><div class="line">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></div><div class="line"></div><div class="line">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee</span></div><div class="line"></div><div class="line">    http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"</div><div class="line"></div><div class="line">    <span class="attr">version</span>=<span class="string">"2.0"</span>&gt;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">tlib-version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">tlib-version</span>&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">short-name</span>&gt;</span>sec<span class="tag">&lt;/<span class="name">short-name</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">function</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>HTMLEncode<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">function-class</span>&gt;</span>ssm.sec.utils.XSSEL<span class="tag">&lt;/<span class="name">function-class</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">function-signature</span>&gt;</span>java.lang.String HTMLEncode(java.lang.String)<span class="tag">&lt;/<span class="name">function-signature</span>&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;/<span class="name">function</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">taglib</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>在WEB.XML文件中配置（可省略）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;jsp-config&gt;</div><div class="line"></div><div class="line">    &lt;taglib&gt;</div><div class="line"></div><div class="line">        &lt;!-- 配置标签的引用地址 JSP页面中引用时使用 --&gt;</div><div class="line"></div><div class="line">        &lt;taglib-uri&gt;/eltag&lt;/taglib-uri&gt;</div><div class="line"></div><div class="line">        &lt;!-- 配置标签的TLD文件地址 --&gt;</div><div class="line"></div><div class="line">        &lt;taglib-location&gt;/WEB-INF/XSSEL.tld&lt;/taglib-location&gt;</div><div class="line"></div><div class="line">    &lt;/taglib&gt;</div><div class="line"></div><div class="line">&lt;/jsp-config&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>在JSP页面内导入并且使用</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;%@ taglib uri=&quot;/eltag&quot; prefix=&quot;sec&quot; %&gt;</div><div class="line"></div><div class="line">&lt;%@ taglib uri=&quot;/WEB-INF/XSSEL.tld&quot; prefix=&quot;sec&quot; %&gt;WEB.XML文件中不配置的情况</div><div class="line"></div><div class="line">$&#123;sec:HTMLEncode(user.userName)&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>针对复杂的业务也可以考虑定义一系列安全编码的方法， 避免重复造轮子的同时也可以增强程序的安全性。</p>
+</blockquote>
+<h2 id="CSRF问题"><a href="#CSRF问题" class="headerlink" title="CSRF问题"></a>CSRF问题</h2><blockquote>
+<p>由于SPRINGMVC 本身不提供像DJANGO那样的CSRF安全接口， 因此在这方面就要脆弱了许多。 这和其他框架的存在和处理的方式亦差不多， 也或者说写出的CSRF代码也更具有通用性。 所以呢主要是浅谈对CSRF问题的处理思路以及相应的好与坏。</p>
+</blockquote>
+<h3 id="1-验证HTTP-REFERER字段"><a href="#1-验证HTTP-REFERER字段" class="headerlink" title="1.验证HTTP REFERER字段"></a>1.验证HTTP REFERER字段</h3><p>HTTP协议的REFERER字段会记录请求来源地址。在通常请况下，一般情况下安全请求来自于同一个网站，如果REFERER来源为第三方网站，则很可能是CSRF攻击，即使REFERER是来自于同一个网站，也有很能是站内的CSRF攻击，那么只能通过正则匹配出来源是否为我们指定的允许请求的链接。</p>
+<h3 id="2-添加验证码"><a href="#2-添加验证码" class="headerlink" title="2.添加验证码"></a>2.添加验证码</h3><p>CSRF攻击的过程是在用户不知情的情况下构造网络请求，所以验证码机制是最有效最快捷的方法。但很多时候，出于用户体验的情况下，并不能给所有的操作都添加上验证码，除非某个操作的敏感性、重要性都十分的高，那么可以考虑加上验证码的方式来验证。</p>
+<h3 id="3-添加Token值"><a href="#3-添加Token值" class="headerlink" title="3.添加Token值"></a>3.添加Token值</h3><h4 id="A）-token储存在cookie中"><a href="#A）-token储存在cookie中" class="headerlink" title="A）.token储存在cookie中"></a>A）.token储存在cookie中</h4><p>Token储存在cookie中，必须考虑两个问题：</p>
+<p>1) 假如同域名下存在XSS，那么cookie则可以被盗取；</p>
+<p>2) 表单的token值如果和cookie储存的相等，那么当cookie值被盗取的时候，则可以构造出表单cookie；</p>
+<p>针对以上两个问题，那么在cookie储存token的实现过程中，必须的有相应的解决方法：</p>
+<ol>
+<li><p>对cookie值储存token设置httponly；</p>
+</li>
+<li><p>设置httponly在某些情况下还是可以泄露cookie的，因此表单的token和cookie的token得有一个加密的过程。</p>
+</li>
+</ol>
+<h4 id="B）-token储存在session中"><a href="#B）-token储存在session中" class="headerlink" title="B）.token储存在session中"></a>B）.token储存在session中</h4><p>Token储存在session中，其实和cookie差不多是一个原理，但有点小差别的是session是储存在服务器的，因此诞生的一个问题便是在分布式环境中session不复制的话，那么此机制便失效了，并且会对正常的业务产生影响。</p>
+<p>因此，当使用sesseion储存的时候，必须考虑搭建的web环境为非分布式环境。</p>
+<h4 id="C）-one-time-token-token储存在memcache等中"><a href="#C）-one-time-token-token储存在memcache等中" class="headerlink" title="C）.one-time token(token储存在memcache等中)"></a>C）.one-time token(token储存在memcache等中)</h4><p>One-time token即一次性token值，请求一次一页面即获取不同的token值。One-time token的难点在“并行会话”中，如用户在同一个站点当中打开两个一样的页面，那么必然两个表单内容也一样，CSRF防护措施不能导致只有一个页面才能提交表单，其它的表单都包含的是无效的token值。因此one-time token必须要在保证不影响“并行会话”的基础上实现。</p>
+<p>以下是实现思路：</p>
+<p>1) 生成token值，以此token值作为memcached的key和value储存；</p>
+<p>2) 在表单中加入此token值的hidden表单；</p>
+<p>3) 验证时比较表单和memcached的token值。</p>
+<blockquote>
+<p>源代码 <a href="https://github.com/jige003/ssm-sec" target="_blank" rel="external">https://github.com/jige003/ssm-sec</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="http://or6a94o1l.bkt.clouddn.com/wechatpay.png" alt="jige003 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java审计/" rel="tag"># java审计</a>
+          
+            <a href="/tags/web安全/" rel="tag"># web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/06/户外海淘入坑/" rel="prev" title="户外海淘入坑">
+                户外海淘入坑 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://or6a94o1l.bkt.clouddn.com/jinmuyan.avatar.png"
+               alt="jige003" />
+          <p class="site-author-name" itemprop="name">jige003</p>
+           
+              <p class="site-description motion-element" itemprop="description">不搞基 只是爱好吃鸡</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-简介"><span class="nav-number">1.</span> <span class="nav-text">0x00 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-SQL注入问题"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 SQL注入问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试使用-传参"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">测试使用#传参</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试使用-传参-1"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">测试使用$传参</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-XSS问题"><span class="nav-number">1.1.1.</span> <span class="nav-text">0x02 XSS问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一些安全的措施"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">一些安全的措施</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRF问题"><span class="nav-number">1.2.</span> <span class="nav-text">CSRF问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-验证HTTP-REFERER字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.验证HTTP REFERER字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-添加验证码"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.添加验证码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-添加Token值"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.添加Token值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A）-token储存在cookie中"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">A）.token储存在cookie中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B）-token储存在session中"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">B）.token储存在session中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C）-one-time-token-token储存在memcache等中"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">C）.one-time token(token储存在memcache等中)</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jige003</span>
+</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "32c0cccd507845f0961d6a561c249fb2",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (search_path.endsWith("json")) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
