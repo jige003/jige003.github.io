@@ -25,6 +25,18 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[【区块链回归技术】比特币账户地址探索]]></title>
+    <url>%2F2018%2F01%2F19%2F%E6%AF%94%E7%89%B9%E5%B8%81%E8%B4%A6%E6%88%B7%E5%9C%B0%E5%9D%80%E6%8E%A2%E7%B4%A2%2F</url>
+    <content type="text"><![CDATA[前段时间断断续续了解了区块链的基本概念、 原理、技术等， 感觉大多数的文章都是千篇一律， 都是介绍区块链就是使用了钱包使用了非对称加密算法， 挖矿使用了pow、 pos、 dpos，网络使用了去中心化得p2p， 存储使用了区块， 还有什么零知识证明、 闪电网络、 侧链等新技术， 感觉都是复制粘贴转载了白皮书的介绍，吹嘘使用的技术多么流弊， 带着币圈的浮躁， 感觉似乎已经能颠覆世界， 但潜心研究区块链技术的文章太少。 空谈误国， 实干兴邦， 基哥只希望潜心探索区块链， 一层层拨开区块链神秘的乌沙， 把各种神秘的技术用技术的语言解释记录下来。 #钱包地址对区块链有基本了解的应该都知道钱包使用的最多的词就是公钥、 私钥、 地址。 私钥相当于钱包的钥匙 公钥相当于银行卡 地址相当于银行卡号 私钥和公钥是使用非对称加密生成， 比特币使用的是椭圆曲线算法。地址是使用公钥作为payload用哈希算法生成的散列值再用base58加密展示。 相关的基本概念网上有很多通俗易懂的解释，这里主要解释比特币地址生成的过程。 使用公钥进行信息摘要处理， 比特币使用的是双哈希也叫哈希160， 先使用SHA256再使用RIPEMD160处理生成digest 对生成的摘要使用base58check进行encoding， base58check带有校验功能， 流程如图所示 首先对生成的摘要加上version prefix， 参考文献wiki上有version的定义， 钱包地址使用的是0 使用两次SHA256生成信息摘要并取前4个字节作为校验码checksum 拼接version+payload+checksum 使用base58加密算法生成地址 以上的各个步骤会用python代码解释1234567891011121314151617181920212223242526272829303132from secp256k1 import PrivateKey, PublicKeyfrom binascii import hexlify, unhexlifyimport hashlibimport base58#生成私钥公钥privkey = PrivateKey()pri_key = privkey.serialize()print &quot;pri_key: %s&quot; % pri_keypub_key = hexlify(privkey.pubkey.serialize())print &quot;pub_key: %s&quot; % pub_key#使用sha256 对公钥进行第一次哈希处理intermed = hashlib.sha256(unhexlify(pub_key)).digest()#使用ripemd160 对sha256生成的摘要进行第二次哈希处理digest = hashlib.new(&apos;ripemd160&apos;, intermed).digest()#根据比特币的定义钱包地址的version为0， 再payload之前加上payload = chr(0) + digest#对payload进行2次sha256的哈希处理， 并取前面4个字节作为校验码checksum = hashlib.sha256(hashlib.sha256(payload).digest()).digest()[:4]#把checksum拼接在payload的尾部payload = payload +checksum#使用base58进行加密处理addr = base58.b58encode(payload)print &quot;wallet addr: %s&quot; % addr 运行结果123pri_key: 309ab3a4e26be042196a66f45d787d45feff36e32eccfb875e0464191fb8565dpub_key: 02bafbedeea575352c209ac4fa1930bcf2bb8051acca9f2fabe777517fa6b92e3fwallet addr: 1JB5evkY74A2JhHiNUqUm9v1x4uN43WE8v #参考文献Technical background of version 1 Bitcoin addresses Base58Check encodingPrivate key]]></content>
+      <categories>
+        <category>blockchain</category>
+      </categories>
+      <tags>
+        <tag>智能合约安全</tag>
+        <tag>区块链安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[扯扯流量问题]]></title>
     <url>%2F2017%2F06%2F09%2F%E6%89%AF%E6%89%AF%E6%B5%81%E9%87%8F%E9%97%AE%E9%A2%98%2F</url>
     <content type="text"><![CDATA[公司由于行业关系，数据和流量是一个特别总要的事， 不同于一般的互联网公司，流量可能只是做提取REQUEST包做漏洞的自动化检测， 而我们tm的还要精确到具体IP、 端口的流量使用情况。 so 根据实际情况还添置了流控设备， 可以设备也未能如愿， 只能查看SRC IP的端口]]></content>
