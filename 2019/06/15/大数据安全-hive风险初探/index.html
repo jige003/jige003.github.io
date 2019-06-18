@@ -93,12 +93,12 @@
 <meta property="og:url" content="http://yoursite.com/2019/06/15/大数据安全-hive风险初探/index.html">
 <meta property="og:site_name" content="jige003">
 <meta property="og:description" content="0x01 白话 hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。 Hive是建立在 Hadoop 上的数据仓库基础构架。它提供了一系">
-<meta property="og:image" content="http://yoursite.com/2019/06/15/大数据安全-hive风险初探/images/p.png">
-<meta property="og:updated_time" content="2019-06-18T11:52:16.478Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/jige003/images/master/p.png">
+<meta property="og:updated_time" content="2019-06-18T12:27:45.787Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="大数据安全-hive风险初探.md">
 <meta name="twitter:description" content="0x01 白话 hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。 Hive是建立在 Hadoop 上的数据仓库基础构架。它提供了一系">
-<meta name="twitter:image" content="http://yoursite.com/2019/06/15/大数据安全-hive风险初探/images/p.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/jige003/images/master/p.png">
 
 
 
@@ -421,14 +421,13 @@
 <p>Hive是建立在 Hadoop 上的数据仓库基础构架。它提供了一系列的工具，可以用来进行数据提取转化加载（ETL），这是一种可以存储、查询和分析存储在 Hadoop 中的大规模数据的机制。Hive 定义了简单的类 SQL 查询语言，称为 HQL，它允许熟悉 SQL 的用户查询数据。同时，这个语言也允许熟悉 MapReduce 开发者的开发自定义的 mapper 和 reducer 来处理内建的 mapper 和 reducer 无法完成的复杂的分析工作。</p>
 <p>因此其本质也还是一个数据库， 并且使用类SQL执行操作， SQL注入的风险肯定是存在的； 本文主要是基于此初探一些进阶的风险利用点；</p>
 <a id="more"></a>
-<p>###0x02 利用点</p>
-<p>1） load data </p>
+<h3 id="0x02-利用点"><a href="#0x02-利用点" class="headerlink" title="0x02 利用点"></a>0x02 利用点</h3><p>1） load data </p>
 <p>此命令是用来导入数据至hive， 数据来源可以是本地数据也可以是hdfs数据， 用法为<code>load data local inpath &#39;/home/hadoop/hive_test/load_data_local.txt&#39; into table load_data_local</code> </p>
 <p>因此可以用此命令读取任意宿主机上的文件， 步骤为：</p>
 <p>a、 创建表<code>create table if not exists xx (x string) row format delimited fields terminated by &#39; &#39; lines terminated by &#39;\n&#39;;</code></p>
 <p>b、 导入本地文件数据， 如/etc/passwd<code>load data local inpath &#39;/etc/passwd&#39; into  table xx;</code></p>
 <p>c、 查看数据<code>select * from xx;</code></p>
-<p><img src="images/p.png" alt="image-20190618191445210"></p>
+<p><img src="https://raw.githubusercontent.com/jige003/images/master/p.png" alt="image-20190618191445210"></p>
 <p>2) udf</p>
 <p>关于udf是啥就自行百度了， 简单概括就是可以自定义函数并加载使用；</p>
 <p>构建步骤：</p>
@@ -666,7 +665,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-白话"><span class="nav-number">1.</span> <span class="nav-text">0x01 白话</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些tips"><span class="nav-number">2.</span> <span class="nav-text">一些tips</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-白话"><span class="nav-number">1.</span> <span class="nav-text">0x01 白话</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-利用点"><span class="nav-number">2.</span> <span class="nav-text">0x02 利用点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些tips"><span class="nav-number">3.</span> <span class="nav-text">一些tips</span></a></li></ol></div>
             
 
           </div>
